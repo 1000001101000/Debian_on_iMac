@@ -58,34 +58,35 @@ jobs:
       run: cd Buster/build/; ./generate_images.sh
       working-directory: "${{env.repo_dir}}"
       
-    #- name: copy buster image to repo
-    #  if: env.build_needed == 'yes'
-    #  run: cp build/output/*.iso installer-image/Buster/
-    #  working-directory: "${{env.repo_dir}}"
-      
-    - name: update buster base installer hash
+    - name: copy buster image to repo
       if: env.build_needed == 'yes'
-      run: cat installer-image/Buster/build/debian-files/mini.iso | md5sum > installer-image/Buster/build/last_build.txt
+      run: cp Buster/build/output/*.iso Buster/installer-image/; git add Buster/installer-image/*
       working-directory: "${{env.repo_dir}}"
+      
+   # - name: update buster base installer hash
+   #   if: env.build_needed == 'yes'
+   #   run: cat installer-image/Buster/build/debian-files/mini.iso | md5sum > installer-image/Buster/build/last_build.txt
+   #   working-directory: "${{env.repo_dir}}"
     
     - name: clear rebuild needed flag 
       if: env.build_needed == 'yes'
       run: echo no > .rebuild
       working-directory: "${{env.repo_dir}}"
       
-  #  - name: if needed, commit
-  #    if: env.build_needed == 'yes'
-  #    run: git commit -v -a -m "update files from external projects"
-  #    working-directory: "${{env.repo_dir}}"
+    - name: if needed, commit
+      if: env.build_needed == 'yes'
+      run: git commit -v -a -m "update files from external projects"
+      working-directory: "${{env.repo_dir}}"
   
-  #  - name: commit new images
-  #    if: env.build_needed == 'yes'
-  #    run: git push https://${{github.actor}}:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git HEAD:master
-  #    working-directory: "${{env.repo_dir}}"
+    - name: commit new images
+      if: env.build_needed == 'yes'
+      run: git push https://${{github.actor}}:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git HEAD:master
+      working-directory: "${{env.repo_dir}}"
+      
   convert:
+    needs: build
     runs-on: [macos]
     steps:
      - uses: actions/checkout@v2
-     - run: ls -l; find .
-        
+     - run: hdiutil convert Buster/installer-image/iMac-buster-installer.iso -format UDRW -o iMac-buster-installer.img
     
