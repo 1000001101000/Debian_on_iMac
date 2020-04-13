@@ -88,5 +88,6 @@ jobs:
     runs-on: [macos]
     steps:
      - uses: actions/checkout@v2
-     - run: hdiutil convert Buster/installer-image/iMac-buster-installer.iso -format UDRW -o iMac-buster-installer.img
+     - run: find .
+     - run: hdiutil convert Buster/installer-image/iMac-buster-installer.iso -format UDRW -o Buster/installer-image/iMac-buster-installer.img
     
