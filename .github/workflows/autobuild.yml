@@ -60,7 +60,7 @@ jobs:
       
     - name: copy buster image to repo
       if: env.build_needed == 'yes'
-      run: mkdir Buster/installer-image/; cp Buster/build/output/*.iso Buster/installer-image/; git add Buster/installer-image/*
+      run: cp Buster/build/output/*.iso Buster/installer-image/; git add Buster/installer-image/*
       working-directory: "${{env.repo_dir}}"
       
    # - name: update buster base installer hash
