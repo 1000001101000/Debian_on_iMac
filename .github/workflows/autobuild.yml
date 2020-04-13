@@ -1,6 +1,6 @@
 name: Generate new images if needed
 
-on: #[push]
+on: [push]
   #schedule: 
   #  - cron: 45 * * * *
 
@@ -10,7 +10,7 @@ jobs:
     container: 'debian:9'
     env:
       repo_dir: .
-      build_needed: no
+      build_needed: yes
     steps: 
     - name: update apt
       run: apt-get update
@@ -19,8 +19,8 @@ jobs:
       run: apt-get -y install curl
     
     ##check for build flag, 
-    - name: check for the build needed flag
-      run: echo "::set-env name=build_needed::$(curl -sL https://github.com/1000001101000/Debian_on_Intel_Terastations/raw/master/.rebuild 2>/dev/null)"  
+    #- name: check for the build needed flag
+    #  run: echo "::set-env name=build_needed::$(curl -sL https://github.com/1000001101000/Debian_on_Intel_Terastations/raw/master/.rebuild 2>/dev/null)"  
     
     - name: configure silent grub install
       run: echo "grub-pc grub-pc/install_devices_empty   boolean true" | debconf-set-selections
@@ -38,30 +38,30 @@ jobs:
       run: git config user.name "workflow@github"; git config user.email "workflow@github"
       working-directory: "${{env.repo_dir}}"
     
-    - name: build stretch installer
-      if: env.build_needed == 'yes'
-      run: cd installer-image/Stretch/build/; ./generate_images.sh
-      working-directory: "${{env.repo_dir}}"
+    #- name: build stretch installer
+    #  if: env.build_needed == 'yes'
+    #  run: cd installer-image/Stretch/build/; ./generate_images.sh
+    #  working-directory: "${{env.repo_dir}}"
     
-    - name: copy stretch image to repo
-      if: env.build_needed == 'yes'
-      run: cp installer-image/Stretch/build/output/*.iso installer-image/Stretch/
-      working-directory: "${{env.repo_dir}}"
+    #- name: copy stretch image to repo
+    #  if: env.build_needed == 'yes'
+    #  run: cp installer-image/Stretch/build/output/*.iso installer-image/Stretch/
+    #  working-directory: "${{env.repo_dir}}"
       
-    - name: update stretch base installer hash
-      if: env.build_needed == 'yes'
-      run: cat installer-image/Stretch/build/debian-files/mini.iso | md5sum > installer-image/Stretch/build/last_build.txt
-      working-directory: "${{env.repo_dir}}"
+    #- name: update stretch base installer hash
+    #  if: env.build_needed == 'yes'
+    #  run: cat installer-image/Stretch/build/debian-files/mini.iso | md5sum > installer-image/Stretch/build/last_build.txt
+    #  working-directory: "${{env.repo_dir}}"
       
     - name: build buster installer
       if: env.build_needed == 'yes'
-      run: cd installer-image/Buster/build/; ./generate_images.sh
+      run: cd Buster/build/; ./generate_images.sh
       working-directory: "${{env.repo_dir}}"
       
-    - name: copy buster image to repo
-      if: env.build_needed == 'yes'
-      run: cp installer-image/Buster/build/output/*.iso installer-image/Buster/
-      working-directory: "${{env.repo_dir}}"
+    #- name: copy buster image to repo
+    #  if: env.build_needed == 'yes'
+    #  run: cp build/output/*.iso installer-image/Buster/
+    #  working-directory: "${{env.repo_dir}}"
       
     - name: update buster base installer hash
       if: env.build_needed == 'yes'
@@ -82,3 +82,10 @@ jobs:
   #    if: env.build_needed == 'yes'
   #    run: git push https://${{github.actor}}:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git HEAD:master
   #    working-directory: "${{env.repo_dir}}"
+  convert:
+    runs-on: [macos]
+    steps:
+     - uses: actions/checkout@v2
+     - run: ls -l; find .
+        
+    
