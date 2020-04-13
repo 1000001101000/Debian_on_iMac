@@ -1,6 +1,10 @@
 name: Generate new images if needed
 
-on: [push]
+on:
+  push:
+    paths: 
+      - '.github/workflows/*.yml'
+  
   #schedule: 
   #  - cron: 45 * * * *
 
@@ -89,5 +93,8 @@ jobs:
     steps:
      - uses: actions/checkout@v2
      - run: find .
-     - run: hdiutil convert Buster/installer-image/iMac-buster-installer.iso -format UDRW -o Buster/installer-image/iMac-buster-installer.img
+     - run: hdiutil convert Buster/installer-image/iMac-buster-installer.iso -format UDRW -o Buster/installer-image/iMac-buster-installer
+     - uses: stefanzweifel/git-auto-commit-action@v4.1.2
+       with:
+         commit_message: Autogenerate Mac compatible image 
     
