@@ -92,7 +92,11 @@ jobs:
     steps:
      - uses: actions/checkout@v2
      - run: git clone https://github.com/${{github.repository}}; echo "::set-env name=repo_dir::$(ls -rt | tail -n 1)"
-     - run: hdiutil convert -ov Buster/installer-image/iMac-buster-installer.iso -format UDRW -o Buster/installer-image/iMac-buster-installer
+     - run: rm Buster/installer-image/iMac-buster-installer.dmg
+       working-directory: "${{env.repo_dir}}"
+     - run: hdiutil convert Buster/installer-image/iMac-buster-installer.iso -format UDRW -o Buster/installer-image/iMac-buster-installer
+       working-directory: "${{env.repo_dir}}"
+     - run: md5sum Buster/installer-image/*
        working-directory: "${{env.repo_dir}}"
      - run: git config user.name "workflow@github"; git config user.email "workflow@github"
        working-directory: "${{env.repo_dir}}"
